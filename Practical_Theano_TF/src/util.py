@@ -47,5 +47,6 @@ def benchmark_pca():
     pass
 
 if __name__ == '__main__':
-    benchmark_pca()
     # 
+    benchmark_pca()
+    #
