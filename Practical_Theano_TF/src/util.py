@@ -44,9 +44,21 @@ def plot_cumulative_variance(pca):
 def benchmark_pca():
     print("start:")
     X, Y, _, _ = get_transformed_data()
+    X = X[:, :300]
+
+    #  Normalise X First
+    mu = X.mean(axis=0)
+    std = X.std(axis=0)
+    X = (X - mu)/std
+
+    print("Performing Logistic regression")
+    Xtrain = X[:-1000]
+    Ytrain = Y[:-1000]
+    Xtest = X[-1000:,]
+    Ytest = Y[-1000:]
     pass
 
 if __name__ == '__main__':
-    # 
+    #
     benchmark_pca()
     #
