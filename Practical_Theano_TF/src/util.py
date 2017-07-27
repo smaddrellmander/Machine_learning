@@ -37,6 +37,7 @@ def plot_cumulative_variance(pca):
         else:
             P.append(p + P[-1])
     plt.plot(P)
+    plt.ylabel("Cumalative variance")
     plt.show()
     return P
 
