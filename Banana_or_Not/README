@@ -1,0 +1,13 @@
+- Banana or Not clone idea.
+- The premise is you point the phone at an object, the camera is rolling in real
+  time and if it is a banana it says yes, otherwise no.
+
+- Basic way to get some computer vision and app building skills working together
+
+- Start with images on the computer to train a network
+- Work out how to implement that straight to classification
+- Then when it works as a script on the computer get into an app format
+
+------
+
+- Can later think about how to use this to gather data or use more information 
