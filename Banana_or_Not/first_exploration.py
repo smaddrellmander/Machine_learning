@@ -49,6 +49,8 @@ model.compile("adam","categorical_crossentropy",metrics=["accuracy"])
 
 print(model.summary())
 
+# Shaoe of data here is a problem. What form is it expecting?
+# Allre shaped  to 28*28
 model.fit(batch_xs, batch_ys, validation_data=(X_val,y_val), epochs=5)
 model.predict_proba(X_val[:2])
 print("\nLoss, Accuracy = ",model.evaluate(X_test,y_test))
