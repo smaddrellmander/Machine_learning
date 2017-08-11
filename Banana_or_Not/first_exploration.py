@@ -15,13 +15,23 @@ def gen_image(arr):
     plt.imshow(two_d, interpolation='nearest')
     return plt
 
+def Re_shape(batch_):
+    lister = []
+    # for arr in batch_:
+    print(batch_[0])
+    lister.append((np.reshape(batch_, (28, 28)) * 255))
+    return lister
+
 # Get a batch of two random images and show in a pop-up window.
 batch_xs, batch_ys = mnist.train.next_batch(1000)
 X_val, y_val = mnist.validation.next_batch(200)
 X_test, y_test = mnist.test.next_batch(1000)
 # gen_image(batch_xs[0]).show()
 # gen_image(batch_xs[1]).show()
-
+batch_xs = Re_shape(batch_xs)
+batch_ys = Re_shape(batch_ys)
+batch_xs = Re_shape(batch_xs)
+batch_xs = Re_shape(batch_xs)
 
 import keras
 from keras.models import Sequential
