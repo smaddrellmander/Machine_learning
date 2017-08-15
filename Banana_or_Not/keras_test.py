@@ -87,6 +87,6 @@ print('Test accuracy:', score[1])
 for N in [0,5, 18, 19, 25]:
     test = model.predict(x_test[N:N+1], batch_size=1)
     print(np.argmax(test))
-    # print(test)
+    print(test)
     plt.imshow(x_test_[N])
     plt.show()
