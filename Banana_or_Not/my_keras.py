@@ -89,6 +89,9 @@ def main():
         print('Prediction:', np.argmax(test), 'Correct answer:', y_val[N])
         plt.imshow(x_vis[N])
         plt.show()
+    # serialize weights to HDF5
+    model.save_weights("model.h5")
+    print("Saved model to disk")
 
 
 if __name__ == '__main__':
