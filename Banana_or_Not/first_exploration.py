@@ -18,8 +18,9 @@ def gen_image(arr):
 def Re_shape(batch_):
     lister = []
     # for arr in batch_:
-    print(batch_[0])
-    lister.append((np.reshape(batch_, (28, 28)) * 255))
+    # print(batch_)
+    for b in batch_:
+        lister.append(np.reshape(b, (28, 28)))
     return lister
 
 # Get a batch of two random images and show in a pop-up window.
@@ -28,39 +29,42 @@ X_val, y_val = mnist.validation.next_batch(200)
 X_test, y_test = mnist.test.next_batch(1000)
 # gen_image(batch_xs[0]).show()
 # gen_image(batch_xs[1]).show()
-batch_xs = Re_shape(batch_xs)
-batch_ys = Re_shape(batch_ys)
-batch_xs = Re_shape(batch_xs)
-batch_xs = Re_shape(batch_xs)
+print(batch_xs[0], batch_xs[1])
+batch_xs = Re_shape(batch_xs[0][:])
+plt.imshow(batch_xs[7], interpolation='nearest')
+plt.show()
+# batch_ys = Re_shape(batch_ys[0])
+X_val = Re_shape(batch_xs[0])
+X_test = Re_shape(batch_xs[0])
 
-import keras
-from keras.models import Sequential
-import keras.layers as ll
-
-model = Sequential(name="cnn")
-
-model.add(ll.InputLayer([1,28,28]))
-
-model.add(ll.Flatten())
-
-#network body
-model.add(ll.Dense(25))
-model.add(ll.Activation('linear'))
-
-model.add(ll.Dropout(0.9))
-
-model.add(ll.Dense(25))
-model.add(ll.Activation('linear'))
-
-#output layer: 10 neurons for each class with softmax
-model.add(ll.Dense(10,activation='softmax'))
-
-model.compile("adam","categorical_crossentropy",metrics=["accuracy"])
-
-print(model.summary())
-
-# Shaoe of data here is a problem. What form is it expecting?
-# Allre shaped  to 28*28
-model.fit(batch_xs, batch_ys, validation_data=(X_val,y_val), epochs=5)
-model.predict_proba(X_val[:2])
-print("\nLoss, Accuracy = ",model.evaluate(X_test,y_test))
+# import keras
+# from keras.models import Sequential
+# import keras.layers as ll
+#
+# model = Sequential(name="cnn")
+#
+# model.add(ll.InputLayer([1,28,28]))
+#
+# model.add(ll.Flatten())
+#
+# #network body
+# model.add(ll.Dense(25))
+# model.add(ll.Activation('linear'))
+#
+# model.add(ll.Dropout(0.9))
+#
+# model.add(ll.Dense(25))
+# model.add(ll.Activation('linear'))
+#
+# #output layer: 10 neurons for each class with softmax
+# model.add(ll.Dense(10,activation='softmax'))
+#
+# model.compile("adam","categorical_crossentropy",metrics=["accuracy"])
+#
+# print(model.summary())
+#
+# # Shaoe of data here is a problem. What form is it expecting?
+# # Allre shaped  to 28*28
+# model.fit(batch_xs, batch_ys, validation_data=(X_val,y_val), epochs=5)
+# model.predict_proba(X_val[:2])
+# print("\nLoss, Accuracy = ",model.evaluate(X_test,y_test))
