@@ -16,6 +16,7 @@ def main():
     epochs = 1
     # Visualisation list
     Ns = np.random.randint(low=0, high=100, size=10)
+    vis = False
 
     # nput image dimensions
     img_rows, img_cols = 28, 28
@@ -23,8 +24,7 @@ def main():
     (x_train_, y_train_), (x_test_, y_test_) = mnist.load_data()
     # Here just reducing the amount of data when running on CPU
     # Still gets surprsingly good results
-
-    y_train = y_train_[0:]
+    x_test = x_test_[0:]
     y_test = y_test_[0:]
 
     # Extra validation for Visualisation
@@ -61,11 +61,12 @@ def main():
     print('Test loss:', score[0])
     print('Test accuracy:', score[1])
 
-    for N in Ns:
-        test = loaded_model.predict(x_val[N:N+1], batch_size=1)
-        print('Prediction:', np.argmax(test), 'Correct answer:', y_val[N])
-        plt.imshow(x_vis[N])
-        plt.show()
+    if vis == True:
+        for N in Ns:
+            test = loaded_model.predict(x_val[N:N+1], batch_size=1)
+            print('Prediction:', np.argmax(test), 'Correct answer:', y_val[N])
+            plt.imshow(x_vis[N])
+            plt.show()
 
 
 

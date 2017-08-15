@@ -12,7 +12,7 @@ def main():
     # Start with parameter values
     batch_size = 128
     num_classes = 10
-    epochs = 10
+    epochs = 3
     # Visualisation list
     Ns = [0, 4, 10, 15, 60]
 
@@ -22,10 +22,10 @@ def main():
     (x_train_, y_train_), (x_test_, y_test_) = mnist.load_data()
     # Here just reducing the amount of data when running on CPU
     # Still gets surprsingly good results
-    x_train = x_train_[0:]
+    x_train = x_train_[0:1000]
     x_test = x_test_[0:]
 
-    y_train = y_train_[0:]
+    y_train = y_train_[0:1000]
     y_test = y_test_[0:]
 
     # Extra validation for Visualisation
@@ -72,14 +72,20 @@ def main():
                         verbose = 1,
                         validation_data = (x_test, y_test))
 
-    plt.plot(logger.history['epochs'], logger.history['loss'])
+    plt.plot(logger.history['loss'])
+    plt.plot(logger.history['val_loss'])
     plt.ylabel('loss')
     plt.xlabel('epoch')
-    plt.show()
-    plt.plot(logger.history['epochs'],logger.history['acc'])
+    plt.legend(['train', 'test'], loc='upper left')
+    plt.savefig('loss.png')
+    # plt.show()
+    plt.plot(logger.history['acc'])
+    plt.plot(logger.history['val_acc'])
     plt.ylabel('acc')
     plt.xlabel('epoch')
-    plt.show()
+    plt.legend(['train', 'test'], loc='upper left')
+    plt.savefig('acc.png')
+    # plt.show()
     score = model.evaluate(x_test, y_test, verbose = 0)
     print('Test loss:', score[0])
     print('Test accuracy:', score[1])
@@ -88,7 +94,7 @@ def main():
         test = model.predict(x_val[N:N+1], batch_size=1)
         print('Prediction:', np.argmax(test), 'Correct answer:', y_val[N])
         plt.imshow(x_vis[N])
-        plt.show()
+        # plt.show()
     # serialize model to JSON
     model_json = model.to_json()
     with open("model.json", "w") as json_file:
