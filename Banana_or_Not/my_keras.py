@@ -12,7 +12,7 @@ def main():
     # Start with parameter values
     batch_size = 128
     num_classes = 10
-    epochs = 1
+    epochs = 10
     # Visualisation list
     Ns = [0, 4, 10, 15, 60]
 
@@ -72,11 +72,11 @@ def main():
                         verbose = 1,
                         validation_data = (x_test, y_test))
 
-    plt.plot(logger.history['loss'])
+    plt.plot(logger.history['epochs'], logger.history['loss'])
     plt.ylabel('loss')
     plt.xlabel('epoch')
     plt.show()
-    plt.plot(logger.history['acc'])
+    plt.plot(logger.history['epochs'],logger.history['acc'])
     plt.ylabel('acc')
     plt.xlabel('epoch')
     plt.show()
