@@ -12,7 +12,7 @@ def main():
     # Start with parameter values
     batch_size = 128
     num_classes = 10
-    epochs = 3
+    epochs = 50
     # Visualisation list
     Ns = [0, 4, 10, 15, 60]
 
@@ -22,10 +22,10 @@ def main():
     (x_train_, y_train_), (x_test_, y_test_) = mnist.load_data()
     # Here just reducing the amount of data when running on CPU
     # Still gets surprsingly good results
-    x_train = x_train_[0:1000]
+    x_train = x_train_[0:]
     x_test = x_test_[0:]
 
-    y_train = y_train_[0:1000]
+    y_train = y_train_[0:]
     y_test = y_test_[0:]
 
     # Extra validation for Visualisation
