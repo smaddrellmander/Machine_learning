@@ -25,7 +25,7 @@ def main():
     cols = 10
     rows = 5
     batch_size = 32
-    epochs = 1
+    epochs = 50
     input_shape = (32, 32, 3)
     num_classes = 10
 
@@ -86,7 +86,7 @@ def main():
         plt.plot(fprs[i], tprs[i], label='%s (AUC %.2lf)' % (class_names[i], aucs[i]))
 
     plt.legend(fontsize=14)
-    plt.show()
+    # plt.show()
 
     y_predicted_classes = np.argmax(y_predicted, axis=1)
     y_true_classes = np.argmax(y_test, axis=1)
@@ -101,11 +101,11 @@ def main():
 
     plt.figure(figsize=(10, 8))
     plt.title('Confusion matrix (diagonal excluded)', fontsize=16)
-    plt.imshow(c_matrix)
+    # plt.imshow(c_matrix)
     plt.xticks(np.arange(10), class_names, rotation=45, fontsize=14)
     plt.yticks(np.arange(10), class_names, fontsize=14)
     plt.colorbar()
-    plt.show()
+    # plt.show()
 
     cols = 7
     rows = 5
@@ -130,7 +130,15 @@ def main():
                     class_names[real_class], class_names[predicted_class], score
                 ))
             im = ax.imshow(X_test[k])
-    plt.show()
+    # plt.show()
+    # serialize model to JSON
+    model_json = model.to_json()
+    with open("model_cifar.json", "w") as json_file:
+        json_file.write(model_json)
+    # serialize weights to HDF5
+    model.save_weights("model_cifar.h5")
+    print("Saved model to disk")
+
 
 if __name__ == '__main__':
     main()
