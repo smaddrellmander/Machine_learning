@@ -12,7 +12,7 @@ def main():
     # Start with parameter values
     batch_size = 128
     num_classes = 10
-    epochs = 1
+    epochs = 50
     # Visualisation list
     Ns = [0, 4, 10, 15, 60]
 
@@ -22,11 +22,11 @@ def main():
     (x_train_, y_train_), (x_test_, y_test_) = mnist.load_data()
     # Here just reducing the amount of data when running on CPU
     # Still gets surprsingly good results
-    x_train = x_train_[0:1000]
-    x_test = x_test_[0:200]
+    x_train = x_train_[0:]
+    x_test = x_test_[0:]
 
-    y_train = y_train_[0:1000]
-    y_test = y_test_[0:200]
+    y_train = y_train_[0:]
+    y_test = y_test_[0:]
 
     # Extra validation for Visualisation
     x_val = x_test_[200:300]
@@ -66,12 +66,20 @@ def main():
                   optimizer = keras.optimizers.Adadelta(),
                   metrics = ['accuracy'])
 
-    model.fit(x_train, y_train,
-                batch_size = batch_size,
-                epochs = epochs,
-                verbose = 1,
-                validation_data = (x_test, y_test))
+    logger = model.fit(x_train, y_train,
+                        batch_size = batch_size,
+                        epochs = epochs,
+                        verbose = 1,
+                        validation_data = (x_test, y_test))
 
+    plt.plot(logger.history['loss'])
+    plt.ylabel('loss')
+    ply.xlabel('epoch')
+    plt.show()
+    plt.plot(logger.history['acc'])
+    plt.ylabel('acc')
+    ply.xlabel('epoch')
+    plt.show()
     score = model.evaluate(x_test, y_test, verbose = 0)
     print('Test loss:', score[0])
     print('Test accuracy:', score[1])
