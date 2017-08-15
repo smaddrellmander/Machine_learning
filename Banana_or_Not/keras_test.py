@@ -12,22 +12,29 @@ from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from keras import backend as K
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 batch_size = 128
 num_classes = 10
 epochs = 1
+N=85
 
 # input image dimensions
 img_rows, img_cols = 28, 28
 
 # the data, shuffled and split between train and test sets
-(x_train, y_train), (x_test, y_test) = mnist.load_data()
+(x_train_, y_train_), (x_test_, y_test_) = mnist.load_data()
+x_train = x_train_[0:1000]
+y_train = y_train_[0:1000]
+
+x_test = x_test_[0:100]
+y_test = y_test_[0:100]
 
 # -----------------
-print(x_train[0].shape)
-plt.imshow(x_train[0])
-plt.show()
+# print(x_train[0].shape)
+# plt.imshow(x_train[0])
+# plt.show()
 # -----------------
 # THe extra 1 here is pixel dimension, 1 as grey scale
 
@@ -77,4 +84,9 @@ score = model.evaluate(x_test, y_test, verbose=0)
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
 
-test = model.evaluate(x_test[0], y_test[0], verbose=0)
+for N in [0,5, 18, 19, 25]:
+    test = model.predict(x_test[N:N+1], batch_size=1)
+    print(np.argmax(test))
+    # print(test)
+    plt.imshow(x_test_[N])
+    plt.show()
