@@ -63,7 +63,7 @@ def main():
                         verbose = 1,
                         validation_data = (X_test, y_test))
 
-    y_predicted = cnn.predict(X_test)
+    y_predicted = model.predict(X_test)
     print('Accuracy:', np.mean( np.argmax(y_predicted, axis=1) ==  np.argmax(y_test, axis=1)))
     from sklearn.metrics import roc_curve, auc
 
