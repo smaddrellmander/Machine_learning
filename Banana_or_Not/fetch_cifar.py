@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import os.path as osp
+# 
 
 def onehot(y, n_classes=10):
     y_ = np.zeros(shape=(y.shape[0], n_classes), dtype='float32')
