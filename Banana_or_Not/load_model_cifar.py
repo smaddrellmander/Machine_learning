@@ -11,17 +11,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from fetch_cifar import fetch_cifar_dataset
+from keras.models import model_from_json
+
 
 def main():
     X_train, y_train, X_test, y_test, class_names = fetch_cifar_dataset()
-
-    print(X_train.shape)
-    print(y_train.shape)
-
-    print(X_test.shape)
-    print(y_test.shape)
-
-    # Show some of the data
     cols = 10
     rows = 5
     batch_size = 500
@@ -29,41 +23,20 @@ def main():
     input_shape = (32, 32, 3)
     num_classes = 10
 
-    fig = plt.figure(figsize=(2 * cols - 1, 2.5 * rows - 1))
-    for i in range(cols):
-        for j in range(rows):
-            k = np.random.randint(0, X_train.shape[0])
+    # load json and create model
+    json_file = open('model_cifar.json', 'r')
+    loaded_model_json = json_file.read()
+    json_file.close()
+    loaded_model = model_from_json(loaded_model_json)
+    # load weights into new model
+    loaded_model.load_weights("model_cifar.h5")
+    print("Loaded model from disk")
 
-            ax = fig.add_subplot(rows, cols, i*rows+j+1)
-            ax.grid('off')
-            ax.axis('off')
-            ax.set_title('%s' % (class_names[np.where(y_train[k] > 0.0)[0][0]]))
-            im = ax.imshow(X_train[k])
-    # plt.show()
-
-    model = Sequential()
-    model.add(Conv2D(32, kernel_size=(3,3),
-                     activation='relu',
-                     input_shape=input_shape))
-    model.add(Conv2D(64, (3,3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2,2))) # Reducing size by factor 2^2
-    model.add(Dropout(0.25))
-    model.add(Flatten()) # To allow our normal NN to work on the vector
-    model.add(Dense(128, activation='relu'))
-    model.add(Dropout(0.5))
-    model.add(Dense(num_classes, activation='softmax')) # The output layer
-
-    model.compile(loss=keras.losses.categorical_crossentropy,
+    loaded_model.compile(loss=keras.losses.categorical_crossentropy,
                   optimizer = keras.optimizers.Adadelta(),
                   metrics = ['accuracy'])
 
-    logger = model.fit(X_train, y_train,
-                        batch_size = batch_size,
-                        epochs = epochs,
-                        verbose = 1,
-                        validation_data = (X_test, y_test))
-
-    y_predicted = model.predict(X_test)
+    y_predicted = loaded_model.predict(X_test)
     print('Accuracy:', np.mean( np.argmax(y_predicted, axis=1) ==  np.argmax(y_test, axis=1)))
     from sklearn.metrics import roc_curve, auc
 
@@ -86,8 +59,8 @@ def main():
         plt.plot(fprs[i], tprs[i], label='%s (AUC %.2lf)' % (class_names[i], aucs[i]))
 
     plt.legend(fontsize=14)
-    # plt.show()
     plt.savefig('ACU_ROC.png')
+    plt.show()
 
     y_predicted_classes = np.argmax(y_predicted, axis=1)
     y_true_classes = np.argmax(y_test, axis=1)
@@ -117,16 +90,10 @@ def main():
                     class_names[real_class], class_names[predicted_class], score
                 ))
             im = ax.imshow(X_test[k])
-    # plt.show()
     plt.savefig('test_pics.png')
-    # serialize model to JSON
-    model_json = model.to_json()
-    with open("model_cifar.json", "w") as json_file:
-        json_file.write(model_json)
-    # serialize weights to HDF5
-    model.save_weights("model_cifar.h5")
-    print("Saved model to disk")
+    plt.show()
 
+    pass
 
 if __name__ == '__main__':
     main()
