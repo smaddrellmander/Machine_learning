@@ -12,10 +12,14 @@ import numpy as np
 
 from fetch_cifar import fetch_cifar_dataset
 from keras.models import model_from_json
+from PIL import Image
 
 
 def main():
     X_train, y_train, X_test, y_test, class_names = fetch_cifar_dataset()
+    temp_pic = Image.open("test.png")
+    plt.imshow(temp_pic)
+    plt.show()
     cols = 10
     rows = 5
     batch_size = 500
