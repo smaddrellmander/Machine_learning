@@ -17,7 +17,7 @@ from PIL import Image
 
 def main():
     X_train, y_train, X_test, y_test, class_names = fetch_cifar_dataset()
-    temp_pic = Image.open("test.png")
+    temp_pic = Image.open("savedog.png")
     plt.imshow(temp_pic)
     plt.show()
     cols = 10

@@ -9,7 +9,7 @@ import shutil
 #
 
 
-url = 'http://www.solarspace.co.uk/PlanetPics/Neptune/NeptuneAlt1.jpg'
+url = 'https://is3-ssl.mzstatic.com/image/thumb/Purple30/v4/2d/86/b3/2d86b3bc-f6c2-8de7-3fa0-f64820e3926a/source/256x256bb.jpg'
 c = urllib3.PoolManager()
 filename = 'save.png'
 
@@ -26,7 +26,7 @@ infile = 'save.png'
 size = 32, 32
 
 
-outfile = os.path.splitext(infile)[0] + "small.png"
+outfile = os.path.splitext(infile)[0] + "dog.png"
 if infile != outfile:
     try:
         im = Image.open(infile)
