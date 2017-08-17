@@ -13,13 +13,19 @@ import numpy as np
 from fetch_cifar import fetch_cifar_dataset
 from keras.models import model_from_json
 from PIL import Image
+from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
 
 
 def main():
     X_train, y_train, X_test, y_test, class_names = fetch_cifar_dataset()
-    temp_pic = Image.open("savedog.png")
+
+    img = load_img('savedog.png')  # this is a PIL image
+    x = img_to_array(img, data_format='channels_last')  # this is a Numpy array with shape (3, 150, 150)
+    x = x.reshape((1,) + x.shape)  # this is a Numpy array with shape (1, 3, 150, 150)
+
+    # temp_pic.append(temp_pics)
     temp_class = 5
-    plt.imshow(temp_pic)
+    plt.imshow(x[0])
     plt.show()
     cols = 10
     rows = 5
@@ -98,20 +104,21 @@ def main():
     plt.savefig('test_pics.png')
     plt.show()
 
-    # Test on the good ol doggo
-    my_predicted = loaded_model.predict(temp_pic)
+
+    fig2 = plt.figure()
+    my_predicted = loaded_model.predict(x)
     my_pred = my_predicted[0]
     my_predicted_class = np.argmax(my_pred)
     my_real_class = temp_class
     my_score = my_pred[my_predicted_class]
-    ax1 = fig.add_subplot(111)
+    ax1 = fig2.add_subplot(111)
     if my_real_class == my_predicted_class:
         ax1.set_title('%s\nscore: %.3lf' % (class_names[my_real_class], my_score))
     else:
         ax1.set_title('real: %s;\npredicted: %s\nwith score: %.3lf' % (
             class_names[my_real_class], class_names[my_predicted_class], my_score
         ))
-    im1 = ax1.imshow(temp_pic)
+    im1 = ax1.imshow(x[0])
     plt.savefig('test_doggo.png')
     plt.show()
 

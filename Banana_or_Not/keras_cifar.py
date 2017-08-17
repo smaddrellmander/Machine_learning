@@ -25,7 +25,7 @@ def main():
     cols = 10
     rows = 5
     batch_size = 500
-    epochs = 1
+    epochs = 75
     input_shape = (32, 32, 3)
     num_classes = 10
 
