@@ -18,6 +18,7 @@ from PIL import Image
 def main():
     X_train, y_train, X_test, y_test, class_names = fetch_cifar_dataset()
     temp_pic = Image.open("savedog.png")
+    temp_class = 5
     plt.imshow(temp_pic)
     plt.show()
     cols = 10
@@ -96,6 +97,24 @@ def main():
             im = ax.imshow(X_test[k])
     plt.savefig('test_pics.png')
     plt.show()
+
+    # Test on the good ol doggo
+    my_predicted = loaded_model.predict(temp_pic)
+    my_pred = my_predicted[0]
+    my_predicted_class = np.argmax(my_pred)
+    my_real_class = temp_class
+    my_score = my_pred[my_predicted_class]
+    ax1 = fig.add_subplot(111)
+    if my_real_class == my_predicted_class:
+        ax1.set_title('%s\nscore: %.3lf' % (class_names[my_real_class], my_score))
+    else:
+        ax1.set_title('real: %s;\npredicted: %s\nwith score: %.3lf' % (
+            class_names[my_real_class], class_names[my_predicted_class], my_score
+        ))
+    im1 = ax1.imshow(temp_pic)
+    plt.savefig('test_doggo.png')
+    plt.show()
+
 
     pass
 
