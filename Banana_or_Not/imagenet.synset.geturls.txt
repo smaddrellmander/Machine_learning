@@ -125,7 +125,6 @@ http://farm1.static.flickr.com/27/60373209_a3eb99c20b.jpg
 http://farm3.static.flickr.com/2026/1544063360_7ec3529266.jpg
 http://farm1.static.flickr.com/113/314205248_1a92a5baf6.jpg
 http://farm1.static.flickr.com/69/230463559_92da46424b.jpg
-http://www.furlongphoto.com/pictures/Fiji2/thumbnails/bannana-stall.jpg
 http://farm3.static.flickr.com/2234/2316265623_bf7bfbdafc.jpg
 http://farm2.static.flickr.com/1153/672769232_474519761b.jpg
 http://farm1.static.flickr.com/83/227661179_5436f2ade8.jpg
@@ -1407,4 +1406,3 @@ http://farm3.static.flickr.com/2231/2091987545_479757a71d.jpg
 http://static.flickr.com/218/467208708_6e227fbf14.jpg
 http://newsimg.bbc.co.uk/media/images/42716000/jpg/_42716903_bananawoman_ap_203.jpg
 http://farm3.static.flickr.com/2414/2061708581_3bd71d0771.jpg
-
