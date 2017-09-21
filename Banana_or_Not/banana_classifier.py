@@ -39,14 +39,30 @@ def get_data():
     pass
 
 def main():
-    get_data()
-    X_train, y_train, X_test, y_test = get_data()
+    # get_data()
+    # X_train, y_train, X_test, y_test = get_data()
+    #
+    # print(X_train.shape)
+    # print(y_train.shape)
+    #
+    # print(X_test.shape)
+    # print(y_test.shape)
 
-    print(X_train.shape)
-    print(y_train.shape)
+    # First attempt at using the ImageDataGenerator
+    train_datagen = ImageDataGenerator(rescale=1./255)
+    test_datagen = ImageDataGenerator(rescale=1./255)
 
-    print(X_test.shape)
-    print(y_test.shape)
+    train_generator = train_datagen.flow_from_directory(
+                    'train',
+                    target_size=(32,32),
+                    batch_size=32,
+                    class_mode='binary')
+    test_generator = test_datagen.flow_from_directory(
+                    'test',
+                    target_size=(32,32),
+                    batch_size=32,
+                    class_mode='binary')
+
 
     # Show some of the data
     cols = 10
@@ -56,17 +72,17 @@ def main():
     input_shape = (32, 32, 3)
     num_classes = 2
 
-    fig = plt.figure(figsize=(2 * cols - 1, 2.5 * rows - 1))
-    for i in range(cols):
-        for j in range(rows):
-            k = np.random.randint(0, X_train.shape[0])
-
-            ax = fig.add_subplot(rows, cols, i*rows+j+1)
-            ax.grid('off')
-            ax.axis('off')
-            ax.set_title('%s' % (class_names[np.where(y_train[k] > 0.0)[0][0]]))
-            im = ax.imshow(X_train[k])
-    # plt.show()
+    # fig = plt.figure(figsize=(2 * cols - 1, 2.5 * rows - 1))
+    # for i in range(cols):
+    #     for j in range(rows):
+    #         k = np.random.randint(0, X_train.shape[0])
+    #
+    #         ax = fig.add_subplot(rows, cols, i*rows+j+1)
+    #         ax.grid('off')
+    #         ax.axis('off')
+    #         ax.set_title('%s' % (class_names[np.where(y_train[k] > 0.0)[0][0]]))
+    #         im = ax.imshow(X_train[k])
+    # # plt.show()
 
     model = Sequential()
     model.add(Conv2D(32, kernel_size=(3,3),
@@ -84,11 +100,12 @@ def main():
                   optimizer = keras.optimizers.Adadelta(),
                   metrics = ['accuracy'])
 
-    logger = model.fit(X_train, y_train,
-                        batch_size = batch_size,
+    logger = model.fit_generator(train_generator,
+                        steps_per_epoch = 150,
                         epochs = epochs,
                         verbose = 1,
-                        validation_data = (X_test, y_test))
+                        validation_data = test_generator,
+                        validation_steps = 100)
 
     y_predicted = model.predict(X_test)
     print('Accuracy:', np.mean( np.argmax(y_predicted, axis=1) ==  np.argmax(y_test, axis=1)))
@@ -114,7 +131,7 @@ def main():
 
     plt.legend(fontsize=14)
     # plt.show()
-    plt.savefig('ACU_ROC.png')
+    plt.savefig('ACU_ROC_ban.png')
 
     y_predicted_classes = np.argmax(y_predicted, axis=1)
     y_true_classes = np.argmax(y_test, axis=1)
@@ -145,13 +162,13 @@ def main():
                 ))
             im = ax.imshow(X_test[k])
     # plt.show()
-    plt.savefig('test_pics.png')
+    plt.savefig('test_pics_ban.png')
     # serialize model to JSON
     model_json = model.to_json()
-    with open("model_cifar.json", "w") as json_file:
+    with open("model_cifar_bana.json", "w") as json_file:
         json_file.write(model_json)
     # serialize weights to HDF5
-    model.save_weights("model_cifar.h5")
+    model.save_weights("model_cifar_bana.h5")
     print("Saved model to disk")
 
 
