@@ -15,41 +15,45 @@ def get_data():
     # How to read in the data
     bananas = []
     rooms = []
+    X_train = []
+    X_test = []
+    y_train = []
+    y_test = []
     for fn in os.listdir('bananas/'):
         # if os.path.isfile(fn):
         print (fn)
         img = load_img('bananas/'+fn)  # this is a PIL image
         a = img_to_array(img, data_format='channels_last')  # this is a Numpy array with shape (3, 150, 150)
-        # a = a.reshape((1,) + a.shape)
+        a = a.reshape((1,) + a.shape)
         bananas.append(a)
-    bananas = np.vstack(bananas)
-    bananas = bananas.reshape((1,) + bananas.shape)
+    # bananas = np.vstack(bananas)
+    # bananas = bananas.reshape((1,) + bananas.shape)
     print(len(bananas))
     for fn in os.listdir('rooms/'):
         # if os.path.isfile(fn):
         print (fn)
         img = load_img('rooms/'+fn)  # this is a PIL image
         a = img_to_array(img, data_format='channels_last')  # this is a Numpy array with shape (3, 150, 150)
-        # a = a.reshape((1,) + a.shape)
+        a = a.reshape((1,) + a.shape)
         rooms.append(a)
-    rooms = np.vstack(rooms)
-    rooms = rooms.reshape((1,) + rooms.shape)
+    # rooms = np.vstack(rooms)
+    # rooms = rooms.reshape((1,) + rooms.shape)
     print(len(rooms))
-    X_train = bananas[0:50]+rooms[0:50]
-    X_test = bananas[50:100]+rooms[50:100]
-    y_train = 50*[1]+50*[0]
-    y_test = 50*[1]+50*[0]
+    X_train = np.vstack(bananas[0:50]+rooms[0:50])
+    X_test = np.vstack(bananas[50:100]+rooms[50:100])
+    y_train = np.vstack(50*[1]+50*[0])
+    y_test = np.vstack(50*[1]+50*[0])
     return X_train, y_train, X_test, y_test
     pass
 
 def main():
     get_data()
     X_train, y_train, X_test, y_test = get_data()
-    print (X_train)
-    print (y_train)
+    # print (X_test)
+    # print (y_test)
 
-    print(X_test)
-    print(y_test)
+    print(len(X_test), 'length X')
+    print(len(y_test), 'length y')
 
     # # First attempt at using the ImageDataGenerator
     # train_datagen = ImageDataGenerator(rescale=1./255)
@@ -72,8 +76,8 @@ def main():
     rows = 5
     batch_size = 500
     epochs = 75
-    input_shape = (None, None, 3)
-    num_classes = 2
+    input_shape = (32, 32, 3)
+    num_classes = 1
 
     # fig = plt.figure(figsize=(2 * cols - 1, 2.5 * rows - 1))
     # for i in range(cols):
@@ -83,10 +87,15 @@ def main():
     #         ax = fig.add_subplot(rows, cols, i*rows+j+1)
     #         ax.grid('off')
     #         ax.axis('off')
-    #         ax.set_title('%s' % (class_names[np.where(y_train[k] > 0.0)[0][0]]))
-    #         im = ax.imshow(X_train[k])
+    #         # ax.set_title('%s' % (class_names[np.where(y_train[k] > 0.0)[0][0]]))
+    #         # THERE IS DEFINETLY SOME SCALING HERE NOT WORKING
+    #         im = ax.imshow(X_train[k]/255)
     # plt.show()
 
+    # print(X_train[0])
+    # print(X_test[0])
+    # print(y_train[0])
+    # print(y_test[0])
     model = Sequential()
     model.add(Conv2D(32, kernel_size=(3,3),
                      activation='relu',
@@ -94,12 +103,12 @@ def main():
     model.add(Conv2D(64, (3,3), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2,2))) # Reducing size by factor 2^2
     model.add(Dropout(0.25))
-    # model.add(Flatten()) # To allow our normal NN to work on the vector
+    model.add(Flatten()) # To allow our normal NN to work on the vector
     model.add(Dense(128, activation='relu'))
     model.add(Dropout(0.5))
     model.add(Dense(num_classes, activation='softmax')) # The output layer
 
-    model.compile(loss=keras.losses.categorical_crossentropy,
+    model.compile(loss=keras.losses.binary_crossentropy,
                   optimizer = keras.optimizers.Adadelta(),
                   metrics = ['accuracy'])
 
