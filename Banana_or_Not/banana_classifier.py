@@ -21,7 +21,7 @@ def get_data():
     y_test = []
     for fn in os.listdir('bananas/'):
         # if os.path.isfile(fn):
-        print (fn)
+        # print (fn)
         img = load_img('bananas/'+fn)  # this is a PIL image
         a = img_to_array(img, data_format='channels_last')  # this is a Numpy array with shape (3, 150, 150)
         a = a.reshape((1,) + a.shape)
@@ -31,7 +31,7 @@ def get_data():
     print(len(bananas))
     for fn in os.listdir('rooms/'):
         # if os.path.isfile(fn):
-        print (fn)
+        # print (fn)
         img = load_img('rooms/'+fn)  # this is a PIL image
         a = img_to_array(img, data_format='channels_last')  # this is a Numpy array with shape (3, 150, 150)
         a = a.reshape((1,) + a.shape)
@@ -40,12 +40,43 @@ def get_data():
     # rooms = rooms.reshape((1,) + rooms.shape)
     print(len(rooms))
     # TODO: Starting here with a very small sample size.
-    X_train = np.vstack(bananas[0:25]+rooms[0:25])
-    X_test = np.vstack(bananas[25:50]+rooms[25:50])
-    y_train = np.vstack(25*[[0,1]]+25*[[1,0]])
-    y_test = np.vstack(25*[[0,1]]+25*[[1,0]])
+    X_train = np.vstack(bananas[0:500]+rooms[0:500])
+    X_test = np.vstack(bananas[500:700]+rooms[500:700])
+    y_train = np.vstack(500*[[0,1]]+500*[[1,0]])
+    y_test = np.vstack(200*[[0,1]]+200*[[1,0]])
     return X_train, y_train, X_test, y_test
     pass
+
+def get_image(PATHTOIMAGE):
+    size = 32, 32
+    img = load_img(PATHTOIMAGE)
+    img = img.resize(size)
+    a = img_to_array(img, data_format='channels_last')
+    a = a.reshape((1,) + a.shape)
+    return a
+
+def test_on_image(model, image_path):
+    class_names = ['rooms', 'bananas']
+    i = get_image(image_path)
+    fig2 = plt.figure()
+    my_predicted = model.predict(i)
+    my_pred = my_predicted[0]
+    my_predicted_class = np.argmax(my_pred)
+    my_real_class = 1 # Assume bananas
+    my_score = my_pred[my_predicted_class]
+    ax1 = fig2.add_subplot(111)
+    if my_real_class == my_predicted_class:
+        ax1.set_title('%s\nscore: %.3lf' % (class_names[my_real_class], my_score))
+    else:
+        ax1.set_title('real: %s;\npredicted: %s\nwith score: %.3lf' % (
+            class_names[my_real_class], class_names[my_predicted_class], my_score
+        ))
+    im1 = ax1.imshow(i[0]/255)
+    # outName = 'save_'+str(n)+'.png'
+    # plt.savefig(outName)
+    plt.show()
+
+
 
 def main():
     get_data()
@@ -63,10 +94,10 @@ def main():
     # Now [0,1] and [1,0] this should work fine
 
     # Show some of the data
-    cols = 10
-    rows = 5
-    batch_size = 50
-    epochs = 12
+    cols = 8
+    rows = 7
+    batch_size = 150
+    epochs = 500
     input_shape = (32, 32, 3)
     num_classes = 2
 
@@ -103,13 +134,29 @@ def main():
                   optimizer = keras.optimizers.Adadelta(),
                   metrics = ['accuracy'])
 
-    logger = model.fit(X_train, y_train,
+    history = model.fit(X_train, y_train,
                         batch_size = batch_size,
                         epochs = epochs,
                         verbose = 1,
                         validation_data = (X_test, y_test))
 
     y_predicted = model.predict(X_test)
+    # summarize history for accuracy
+    plt.plot(history.history['acc'])
+    plt.plot(history.history['val_acc'])
+    plt.title('model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    plt.show()
+    # summarize history for loss
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('model loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    plt.show()
     print('Accuracy:', np.mean( np.argmax(y_predicted, axis=1) ==  np.argmax(y_test, axis=1)))
     from sklearn.metrics import roc_curve, auc
 
@@ -173,6 +220,8 @@ def main():
     # serialize weights to HDF5
     model.save_weights("model_cifar_bana.h5")
     print("Saved model to disk")
+
+    test_on_image(model, 'real_world_test.png')
 
 
 if __name__ == '__main__':
