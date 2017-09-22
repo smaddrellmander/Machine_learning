@@ -39,10 +39,11 @@ def get_data():
     # rooms = np.vstack(rooms)
     # rooms = rooms.reshape((1,) + rooms.shape)
     print(len(rooms))
-    X_train = np.vstack(bananas[0:50]+rooms[0:50])
-    X_test = np.vstack(bananas[50:100]+rooms[50:100])
-    y_train = np.vstack(50*[0,1]+50*[1,0])
-    y_test = np.vstack(50*[0,1]+50*[1,0])
+    # TODO: Starting here with a very small sample size.
+    X_train = np.vstack(bananas[0:25]+rooms[0:25])
+    X_test = np.vstack(bananas[25:50]+rooms[25:50])
+    y_train = np.vstack(25*[[0,1]]+25*[[1,0]])
+    y_test = np.vstack(25*[[0,1]]+25*[[1,0]])
     return X_train, y_train, X_test, y_test
     pass
 
@@ -115,7 +116,7 @@ def main():
     fprs, tprs = [None] * 10, [None] * 10
     aucs = [None] * 10
 
-    for i in range(10):
+    for i in range(1):
         fprs[i], tprs[i], _ = roc_curve(y_test[:, i], y_predicted[:, i])
         aucs[i] = auc(fprs[i], tprs[i], reorder=True)
 
@@ -127,11 +128,12 @@ def main():
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
 
-    for i in range(10):
+    class_names = ['rooms', 'bananas']
+    for i in range(1):
         plt.plot(fprs[i], tprs[i], label='%s (AUC %.2lf)' % (class_names[i], aucs[i]))
 
     plt.legend(fontsize=14)
-    # plt.show()
+    plt.show()
     plt.savefig('ACU_ROC_ban.png')
 
     y_predicted_classes = np.argmax(y_predicted, axis=1)
@@ -161,7 +163,7 @@ def main():
                 ax.set_title('real: %s;\npredicted: %s\nwith score: %.3lf' % (
                     class_names[real_class], class_names[predicted_class], score
                 ))
-            im = ax.imshow(X_test[k])
+            im = ax.imshow(X_test[k]/255)
     # plt.show()
     plt.savefig('test_pics_ban.png')
     # serialize model to JSON

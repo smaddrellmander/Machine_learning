@@ -8,7 +8,7 @@ from io import StringIO
 from urllib import request
 
 i = 0
-f = open('imagenet.synset.geturls.txt')
+f = open('imagenet.synset.geturls.rooms.txt')
 for line in f:
     i += 1
     print('{0}/{1}'.format(i, 'len(f)'))
@@ -20,7 +20,7 @@ for line in f:
     size = 32, 32
 
 
-    outfile = 'bananas/'+os.path.splitext(infile)[0] + "thumb"+str(i)+".png"
+    outfile = 'rooms/'+os.path.splitext(infile)[0] + "thumb"+str(i)+".png"
     if infile != outfile:
         try:
             im = Image.open(infile)
