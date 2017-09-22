@@ -41,8 +41,8 @@ def get_data():
     print(len(rooms))
     X_train = np.vstack(bananas[0:50]+rooms[0:50])
     X_test = np.vstack(bananas[50:100]+rooms[50:100])
-    y_train = np.vstack(50*[1]+50*[0])
-    y_test = np.vstack(50*[1]+50*[0])
+    y_train = np.vstack(50*[0,1]+50*[1,0])
+    y_test = np.vstack(50*[0,1]+50*[1,0])
     return X_train, y_train, X_test, y_test
     pass
 
@@ -55,47 +55,37 @@ def main():
     print(len(X_test), 'length X')
     print(len(y_test), 'length y')
 
-    # # First attempt at using the ImageDataGenerator
-    # train_datagen = ImageDataGenerator(rescale=1./255)
-    # test_datagen = ImageDataGenerator(rescale=1./255)
-    #
-    # train_generator = train_datagen.flow_from_directory(
-    #                 'train',
-    #                 target_size=(32,32),
-    #                 batch_size=32,
-    #                 class_mode='binary')
-    # test_generator = test_datagen.flow_from_directory(
-    #                 'test',
-    #                 target_size=(32,32),
-    #                 batch_size=32,
-    #                 class_mode='binary')
-    #
-    # print(train_generator)
+    # TODO:
+    # What we want here is to on hot encode the data. With binary this is actually quite easy
+    # How best to do this?
+    # Simplest way to encode in the way I was classifying already
+    # Now [0,1] and [1,0] this should work fine
+
     # Show some of the data
     cols = 10
     rows = 5
-    batch_size = 500
-    epochs = 75
+    batch_size = 50
+    epochs = 12
     input_shape = (32, 32, 3)
-    num_classes = 1
+    num_classes = 2
 
-    # fig = plt.figure(figsize=(2 * cols - 1, 2.5 * rows - 1))
-    # for i in range(cols):
-    #     for j in range(rows):
-    #         k = np.random.randint(0, X_train.shape[0])
-    #
-    #         ax = fig.add_subplot(rows, cols, i*rows+j+1)
-    #         ax.grid('off')
-    #         ax.axis('off')
-    #         # ax.set_title('%s' % (class_names[np.where(y_train[k] > 0.0)[0][0]]))
-    #         # THERE IS DEFINETLY SOME SCALING HERE NOT WORKING
-    #         im = ax.imshow(X_train[k]/255)
-    # plt.show()
+    fig = plt.figure(figsize=(2 * cols - 1, 2.5 * rows - 1))
+    for i in range(cols):
+        for j in range(rows):
+            k = np.random.randint(0, X_train.shape[0])
+
+            ax = fig.add_subplot(rows, cols, i*rows+j+1)
+            ax.grid('off')
+            ax.axis('off')
+            # ax.set_title('%s' % (class_names[np.where(y_train[k] > 0.0)[0][0]]))
+            # THERE IS DEFINETLY SOME SCALING HERE NOT WORKING
+            im = ax.imshow(X_train[k]/255)
+    plt.show()
 
     # print(X_train[0])
     # print(X_test[0])
-    # print(y_train[0])
-    # print(y_test[0])
+    print(y_train[0])
+    print(y_test[0])
     model = Sequential()
     model.add(Conv2D(32, kernel_size=(3,3),
                      activation='relu',
@@ -108,7 +98,7 @@ def main():
     model.add(Dropout(0.5))
     model.add(Dense(num_classes, activation='softmax')) # The output layer
 
-    model.compile(loss=keras.losses.binary_crossentropy,
+    model.compile(loss=keras.losses.categorical_crossentropy,
                   optimizer = keras.optimizers.Adadelta(),
                   metrics = ['accuracy'])
 
