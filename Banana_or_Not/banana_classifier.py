@@ -22,6 +22,11 @@ def get_data():
     for fn in os.listdir('bananas/'):
         # if os.path.isfile(fn):
         # print (fn)
+        size = os.path.getsize('bananas/'+fn)
+        # print(str(size), str(fn))
+        if size < 1000:
+            # print("passing")
+            continue
         img = load_img('bananas/'+fn)  # this is a PIL image
         a = img_to_array(img, data_format='channels_last')  # this is a Numpy array with shape (3, 150, 150)
         a = a.reshape((1,) + a.shape)
@@ -32,17 +37,22 @@ def get_data():
     for fn in os.listdir('rooms/'):
         # if os.path.isfile(fn):
         # print (fn)
+        size = os.path.getsize('rooms/'+fn)
+        # print(size)
+        if size < 1000:
+            # print("passing")
+            continue
         img = load_img('rooms/'+fn)  # this is a PIL image
         a = img_to_array(img, data_format='channels_last')  # this is a Numpy array with shape (3, 150, 150)
         a = a.reshape((1,) + a.shape)
         rooms.append(a)
     # rooms = np.vstack(rooms)
     # rooms = rooms.reshape((1,) + rooms.shape)
-    print(len(rooms))
+    print(len(rooms), len(bananas))
     # TODO: Starting here with a very small sample size.
-    X_train = np.vstack(bananas[0:500]+rooms[0:500])
-    X_test = np.vstack(bananas[500:700]+rooms[500:700])
-    y_train = np.vstack(500*[[0,1]]+500*[[1,0]])
+    X_train = np.vstack(bananas[0:300]+rooms[0:300])
+    X_test = np.vstack(bananas[300:500]+rooms[300:500])
+    y_train = np.vstack(300*[[0,1]]+300*[[1,0]])
     y_test = np.vstack(200*[[0,1]]+200*[[1,0]])
     return X_train, y_train, X_test, y_test
     pass
@@ -97,8 +107,8 @@ def main():
     cols = 8
     rows = 7
     batch_size = 150
-    epochs = 500
-    input_shape = (32, 32, 3)
+    epochs = 40
+    input_shape = (128, 128, 3)
     num_classes = 2
 
     fig = plt.figure(figsize=(2 * cols - 1, 2.5 * rows - 1))
@@ -119,17 +129,23 @@ def main():
     print(y_train[0])
     print(y_test[0])
     model = Sequential()
-    model.add(Conv2D(32, kernel_size=(3,3),
+    model.add(Conv2D(128, kernel_size=(3,3),
                      activation='relu',
                      input_shape=input_shape))
     model.add(Conv2D(64, (3,3), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2,2))) # Reducing size by factor 2^2
+    model.add(Conv2D(64, (3,3), activation='relu'))
+    model.add(Dropout(0.25))
+    model.add(MaxPooling2D(pool_size=(2,2))) # Reducing size by factor 2^2
     model.add(Dropout(0.25))
     model.add(Flatten()) # To allow our normal NN to work on the vector
     model.add(Dense(128, activation='relu'))
+    model.add(Dense(64, activation='relu'))
+    model.add(Dense(32, activation='relu'))
     model.add(Dropout(0.5))
     model.add(Dense(num_classes, activation='softmax')) # The output layer
 
+    # Learnign rate should be left as is for Adadelta
     model.compile(loss=keras.losses.categorical_crossentropy,
                   optimizer = keras.optimizers.Adadelta(),
                   metrics = ['accuracy'])

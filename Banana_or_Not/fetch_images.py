@@ -20,7 +20,7 @@ for line in f:
     size = 128, 128
 
 
-    outfile = 'rooms/'+os.path.splitext(infile)[0] + "thumb"+str(i)+".png"
+    outfile = 'bananas/'+os.path.splitext(infile)[0] + "thumb"+str(i)+".png"
     if infile != outfile:
         try:
             im = Image.open(infile)
