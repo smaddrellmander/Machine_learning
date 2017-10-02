@@ -58,7 +58,7 @@ def get_data():
     pass
 
 def get_image(PATHTOIMAGE):
-    size = 32, 32
+    size = 128, 128
     img = load_img(PATHTOIMAGE)
     img = img.resize(size)
     a = img_to_array(img, data_format='channels_last')
@@ -107,7 +107,7 @@ def main():
     cols = 8
     rows = 7
     batch_size = 150
-    epochs = 40
+    epochs = 20
     input_shape = (128, 128, 3)
     num_classes = 2
 
@@ -164,7 +164,8 @@ def main():
     plt.ylabel('accuracy')
     plt.xlabel('epoch')
     plt.legend(['train', 'test'], loc='upper left')
-    plt.show()
+    plt.savefig("acc.png")
+    # plt.show()
     # summarize history for loss
     plt.plot(history.history['loss'])
     plt.plot(history.history['val_loss'])
@@ -172,7 +173,8 @@ def main():
     plt.ylabel('loss')
     plt.xlabel('epoch')
     plt.legend(['train', 'test'], loc='upper left')
-    plt.show()
+    plt.savefig("loss.png")
+    # plt.show()
     print('Accuracy:', np.mean( np.argmax(y_predicted, axis=1) ==  np.argmax(y_test, axis=1)))
     from sklearn.metrics import roc_curve, auc
 
@@ -196,7 +198,7 @@ def main():
         plt.plot(fprs[i], tprs[i], label='%s (AUC %.2lf)' % (class_names[i], aucs[i]))
 
     plt.legend(fontsize=14)
-    plt.show()
+    # plt.show()
     plt.savefig('ACU_ROC_ban.png')
 
     y_predicted_classes = np.argmax(y_predicted, axis=1)
