@@ -58,7 +58,7 @@ def get_data():
     pass
 
 def get_image(PATHTOIMAGE):
-    size = 128, 128
+    size = 128 , 128
     img = load_img(PATHTOIMAGE)
     img = img.resize(size)
     a = img_to_array(img, data_format='channels_last')
@@ -107,7 +107,7 @@ def main():
     cols = 8
     rows = 7
     batch_size = 150
-    epochs = 20
+    epochs = 15
     input_shape = (128, 128, 3)
     num_classes = 2
 
@@ -129,12 +129,12 @@ def main():
     print(y_train[0])
     print(y_test[0])
     model = Sequential()
-    model.add(Conv2D(128, kernel_size=(3,3),
+    model.add(Conv2D(128, kernel_size=(7,7),
                      activation='relu',
                      input_shape=input_shape))
-    model.add(Conv2D(64, (3,3), activation='relu'))
+    model.add(Conv2D(64, (7,7), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2,2))) # Reducing size by factor 2^2
-    model.add(Conv2D(64, (3,3), activation='relu'))
+    model.add(Conv2D(64, (5,5), activation='relu'))
     model.add(Dropout(0.25))
     model.add(MaxPooling2D(pool_size=(2,2))) # Reducing size by factor 2^2
     model.add(Dropout(0.25))
