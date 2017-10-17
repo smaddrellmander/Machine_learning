@@ -1,4 +1,7 @@
 import keras
+from random import shuffle
+from PIL import ImageOps
+
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten, Input
 from keras.layers import Conv2D, MaxPooling2D, GlobalMaxPooling2D
@@ -19,46 +22,73 @@ def get_data():
     X_test = []
     y_train = []
     y_test = []
-    for fn in os.listdir('bananas/'):
+    scale=1.01
+    for fn in os.listdir('phone/bananas'):#104 items
         # if os.path.isfile(fn):
         # print (fn)
-        size = os.path.getsize('bananas/'+fn)
+        size = os.path.getsize('phone/bananas/'+fn)
         # print(str(size), str(fn))
         if size < 1000:
             # print("passing")
             continue
-        img = load_img('bananas/'+fn)  # this is a PIL image
+        size = 32 , 32
+        img = load_img('phone/bananas/'+fn)  # this is a PIL image
+        img = img.resize(size)
+        mirror_img = ImageOps.mirror(img)
         a = img_to_array(img, data_format='channels_last')  # this is a Numpy array with shape (3, 150, 150)
         a = a.reshape((1,) + a.shape)
         bananas.append(a)
+        # include the mirror image, doubles availible data
+        b = img_to_array(mirror_img, data_format='channels_last')  # this is a Numpy array with shape (3, 150, 150)
+        b = b.reshape((1,) + b.shape)
+        bananas.append(b)
+        for scale in [-0.97, -0.98, -0.99, 1.01, 1.02, 1.02, 1.03]:
+            c = img_to_array(img, data_format='channels_last')*scale
+            c = c.reshape((1,) + c.shape)
+            bananas.append(c)
+
     # bananas = np.vstack(bananas)
     # bananas = bananas.reshape((1,) + bananas.shape)
     print(len(bananas))
-    for fn in os.listdir('rooms/'):
+    for fn in os.listdir('phone/rooms/'):#94 items
         # if os.path.isfile(fn):
         # print (fn)
-        size = os.path.getsize('rooms/'+fn)
+        size = os.path.getsize('phone/rooms/'+fn)
         # print(size)
         if size < 1000:
             # print("passing")
             continue
-        img = load_img('rooms/'+fn)  # this is a PIL image
+        size = 32 , 32
+        img = load_img('phone/rooms/'+fn)  # this is a PIL image
+        img = img.resize(size)
+        mirror_img = ImageOps.mirror(img)
         a = img_to_array(img, data_format='channels_last')  # this is a Numpy array with shape (3, 150, 150)
         a = a.reshape((1,) + a.shape)
         rooms.append(a)
+        # include the mirror image
+        b = img_to_array(mirror_img, data_format='channels_last')  # this is a Numpy array with shape (3, 150, 150)
+        b = b.reshape((1,) + b.shape)
+        rooms.append(b)
+        for scale in [-0.97, -0.98, -0.99, 1.01, 1.02, 1.02, 1.03]:
+            c = img_to_array(img, data_format='channels_last')*scale
+            c = c.reshape((1,) + c.shape)
+            rooms.append(c)
     # rooms = np.vstack(rooms)
     # rooms = rooms.reshape((1,) + rooms.shape)
     print(len(rooms), len(bananas))
-    # TODO: Starting here with a very small sample size.
-    X_train = np.vstack(bananas[0:300]+rooms[0:300])
-    X_test = np.vstack(bananas[300:500]+rooms[300:500])
-    y_train = np.vstack(300*[[0,1]]+300*[[1,0]])
-    y_test = np.vstack(200*[[0,1]]+200*[[1,0]])
+    len_b_train = len(bananas) - 100
+    len_r_train = len(rooms) - 100
+    print(len_r_train)
+    X_train = np.vstack(bananas[0:len_r_train]+rooms[0:len_r_train])
+    X_test = np.vstack(bananas[len_r_train:len(rooms)]+rooms[len_r_train:len(rooms)])
+    y_train = np.vstack(len_r_train*[[0,1]]+len_r_train*[[1,0]])
+    y_test = np.vstack(100*[[0,1]]+100*[[1,0]])
+    print( len(X_train), len(y_train), len(X_test), len(y_test))
     return X_train, y_train, X_test, y_test
     pass
 
 def get_image(PATHTOIMAGE):
-    size = 128 , 128
+    size = 32 , 32
     img = load_img(PATHTOIMAGE)
     img = img.resize(size)
     a = img_to_array(img, data_format='channels_last')
@@ -89,7 +119,6 @@ def test_on_image(model, image_path):
 
 
 def main():
-    get_data()
     X_train, y_train, X_test, y_test = get_data()
     # print (X_test)
     # print (y_test)
@@ -106,9 +135,9 @@ def main():
     # Show some of the data
     cols = 8
     rows = 7
-    batch_size = 150
+    batch_size = 50
     epochs = 15
-    input_shape = (128, 128, 3)
+    input_shape = (32, 32, 3)
     num_classes = 2
 
     fig = plt.figure(figsize=(2 * cols - 1, 2.5 * rows - 1))
@@ -120,29 +149,32 @@ def main():
             ax.grid('off')
             ax.axis('off')
             # ax.set_title('%s' % (class_names[np.where(y_train[k] > 0.0)[0][0]]))
-            # THERE IS DEFINETLY SOME SCALING HERE NOT WORKING
             im = ax.imshow(X_train[k]/255)
     plt.show()
 
     # print(X_train[0])
     # print(X_test[0])
-    print(y_train[0])
-    print(y_test[0])
+    # print(y_train[0])
+    # print(y_test[0])
     model = Sequential()
-    model.add(Conv2D(128, kernel_size=(7,7),
+    model.add(Conv2D(32, kernel_size=(9,9),
                      activation='relu',
                      input_shape=input_shape))
-    model.add(Conv2D(64, (7,7), activation='relu'))
+    model.add(Conv2D(32, (7,7), activation='relu'))
+    model.add(Conv2D(32, (5,5), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2,2))) # Reducing size by factor 2^2
-    model.add(Conv2D(64, (5,5), activation='relu'))
+    # model.add(Conv2D(32, (5,5), activation='relu'))
+    model.add(Conv2D(32, (3,3), activation='relu'))
     model.add(Dropout(0.25))
-    model.add(MaxPooling2D(pool_size=(2,2))) # Reducing size by factor 2^2
-    model.add(Dropout(0.25))
+    # model.add(MaxPooling2D(pool_size=(2,2))) # Reducing size by factor 2^2
+    # model.add(Dropout(0.25))
     model.add(Flatten()) # To allow our normal NN to work on the vector
-    model.add(Dense(128, activation='relu'))
+    # model.add(Dense(128, activation='relu'))
+    # model.add(Dense(128, activation='relu'))
+    model.add(Dense(64, activation='relu'))
     model.add(Dense(64, activation='relu'))
     model.add(Dense(32, activation='relu'))
-    model.add(Dropout(0.5))
+    # model.add(Dropout(0.25))
     model.add(Dense(num_classes, activation='softmax')) # The output layer
 
     # Learnign rate should be left as is for Adadelta
@@ -158,22 +190,24 @@ def main():
 
     y_predicted = model.predict(X_test)
     # summarize history for accuracy
+    plt.figure()
     plt.plot(history.history['acc'])
     plt.plot(history.history['val_acc'])
     plt.title('model accuracy')
     plt.ylabel('accuracy')
     plt.xlabel('epoch')
     plt.legend(['train', 'test'], loc='upper left')
-    plt.savefig("acc.png")
+    plt.savefig("plots/acc.png")
     # plt.show()
     # summarize history for loss
+    plt.figure()
     plt.plot(history.history['loss'])
     plt.plot(history.history['val_loss'])
     plt.title('model loss')
     plt.ylabel('loss')
     plt.xlabel('epoch')
     plt.legend(['train', 'test'], loc='upper left')
-    plt.savefig("loss.png")
+    plt.savefig("plots/loss.png")
     # plt.show()
     print('Accuracy:', np.mean( np.argmax(y_predicted, axis=1) ==  np.argmax(y_test, axis=1)))
     from sklearn.metrics import roc_curve, auc
@@ -199,7 +233,7 @@ def main():
 
     plt.legend(fontsize=14)
     # plt.show()
-    plt.savefig('ACU_ROC_ban.png')
+    plt.savefig('plots/AUC_ROC.png')
 
     y_predicted_classes = np.argmax(y_predicted, axis=1)
     y_true_classes = np.argmax(y_test, axis=1)
@@ -230,16 +264,16 @@ def main():
                 ))
             im = ax.imshow(X_test[k]/255)
     # plt.show()
-    plt.savefig('test_pics_ban.png')
+    plt.savefig('plots/sample_bananas.png')
     # serialize model to JSON
     model_json = model.to_json()
-    with open("model_cifar_bana.json", "w") as json_file:
+    with open("weights/model_cifar_bana.json", "w") as json_file:
         json_file.write(model_json)
     # serialize weights to HDF5
-    model.save_weights("model_cifar_bana.h5")
+    model.save_weights("weights/model_cifar_bana.h5")
     print("Saved model to disk")
 
-    test_on_image(model, 'real_world_test.png')
+    # test_on_image(model, 'real_world_test.png')
 
 
 if __name__ == '__main__':
