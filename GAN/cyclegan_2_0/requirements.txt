@@ -20,7 +20,7 @@ chardet==3.0.4
 ckmutil==0.3.2
 click==6.7
 clint==0.5.1
-cryptography==1.9
+cryptography==3.2
 cssselect==1.0.3
 cycler==0.10.0
 Cython==0.28.3
