@@ -65,7 +65,7 @@ Keras==2.0.6
 Keras-Applications==1.0.8
 Keras-Preprocessing==1.1.0
 llvmlite==0.25.0
-lxml==3.8.0
+lxml==4.6.2
 lz4==2.1.2
 Markdown==2.6.8
 markovify==0.6.0
